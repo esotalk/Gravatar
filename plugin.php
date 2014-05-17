@@ -50,7 +50,7 @@ class ETPlugin_Gravatar extends ETPlugin {
 
 	function fieldAvatar($form)
 	{
-		return T("Change your avatar on <a href='http://gravatar.com' target='_blank'>Gravatar.com</a>.");
+		return sprintf(T("Change your avatar on %s."), "<a href='http://gravatar.com' target='_blank'>Gravatar.com</a>");
 	}
 
 	/**

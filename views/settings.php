@@ -30,9 +30,9 @@ $form = $data["gravatarSettingsForm"];
 <ul class='form'>
 
 <li>
-<label>Default imageset</label>
+<label><?php echo T("Default imageset"); ?></label>
 <div class='checkboxGroup' id='gravatarDefaults'>
-	<label class='radio'><?php echo $form->radio("default", "mm"); ?> <img src='http://www.gravatar.com/avatar/0?d=mm' class='avatar'> Mystery Man</label>
+	<label class='radio'><?php echo $form->radio("default", "mm"); ?> <img src='http://www.gravatar.com/avatar/0?d=mm' class='avatar'> <?php echo T("Default"); ?></label>
 	<label class='radio'><?php echo $form->radio("default", "identicon"); ?> <img src='http://www.gravatar.com/avatar/0?d=identicon' class='avatar'> Identicon</label>
 	<label class='radio'><?php echo $form->radio("default", "monsterid"); ?> <img src='http://www.gravatar.com/avatar/0?d=monsterid' class='avatar'> MonsterID</label>
 	<label class='radio'><?php echo $form->radio("default", "wavatar"); ?> <img src='http://www.gravatar.com/avatar/0?d=wavatar' class='avatar'> Wavatar</label>
