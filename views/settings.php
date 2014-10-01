@@ -21,6 +21,10 @@ $form = $data["gravatarSettingsForm"];
 #gravatarDefaults img {
 	display:block;
 }
+
+#gravatarForce label {
+	width: auto;
+}
 </style>
 
 <?php echo $form->open(); ?>
@@ -39,7 +43,9 @@ $form = $data["gravatarSettingsForm"];
 	<label class='radio'><?php echo $form->radio("default", "retro"); ?> <img src='http://www.gravatar.com/avatar/0?d=retro' class='avatar'> Retro</label>
 </div>
 </li>
-
+<li id="gravatarForce">
+	<label class="checkbox"><?php echo $form->checkbox("forceGravatar"); ?> <?php echo T("Force all members to use Gravatar"); ?></label>
+</li>
 </ul>
 
 </div>
