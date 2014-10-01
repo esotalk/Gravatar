@@ -37,9 +37,12 @@ class ETPlugin_Gravatar extends ETPlugin {
 			$useGravatar = isset($member["preferences"]["gravatar.useGravatar"]) ? $member["preferences"]["gravatar.useGravatar"] : 0;
 			$protocol = C("esoTalk.https") ? "https" : "http";
 
+			// If Gravatar use is not forced and the user has uploaded custom avatar
 			if (!$forceGravatar and !empty($member["memberId"]) and !empty($member["avatarFormat"])) {
 				$file = "uploads/avatars/{$member["memberId"]}.{$member["avatarFormat"]}";
 				$customAvatarUrl = getWebPath($file);
+				// We save the URL of the user-defined avatar in session so we can use it
+				// in fieldUseGravatar()
 				ET::$session->store("gravatar.customAvatarUrl", $customAvatarUrl);
 			} else {
 				$customAvatarUrl = '';
@@ -63,25 +66,36 @@ class ETPlugin_Gravatar extends ETPlugin {
 		}
 	}
 	
+	/**
+	 * Initializes the settings controller
+	 * 
+	 * @param type $controller
+	 */
 	public function handler_settingsController_init($controller) {
 		$controller->addJSFile( $this->resource("gravatar.js") );
 	}
 
-	// Change the avatar field on the settings page.
+	/**
+	 * Adds Gravatar option to preferences page, possibly removes the avatar
+	 * upload field.
+	 * 
+	 * @param type $sender
+	 * @param ETForm $form The form object.
+	 */
 	function handler_settingsController_initGeneral($sender, $form)
 	{
 		$forceGravatar = C("plugin.Gravatar.forceGravatar") ? C("plugin.Gravatar.forceGravatar") : 0;
 		
-		// Don't confuse members with the default avatar needed when they can't
-		// do nothing with it.
 		if ($forceGravatar == 1 ) {
+			// Don't confuse members with the default avatar when they can't
+			// do nothing with it anyway.
 			$form->removeField("avatar", "avatar");
 		} else {
 			$form->setValue("useGravatar", ET::$session->preference("gravatar.useGravatar"));
 			$form->addField("avatar", "useGravatar", array($this, "fieldUseGravatar"), array($this, "saveGravatarPreference"));						
 		}
 		
-		$form->addField("avatar", "gravatar", array($this, "fieldGravatar"));
+		$form->addField("avatar", "gravatarLink", array($this, "fieldGravatar"));
 	}
 
 	/**
@@ -105,13 +119,22 @@ class ETPlugin_Gravatar extends ETPlugin {
 	 */
 	public function fieldUseGravatar($form)
 	{
+		// We fetch the user-defined avatar we stored in the session earlier. This
+		// is then used in JavaScript to display the original image when a member
+		// unchecks the "Use Gravatar..." option. Because it was damn confusing
+		// when it showed the Gravatar.
 		$dataAttr = ET::$session->get("gravatar.customAvatarUrl", "");
-		return "<label class='checkbox'>" .$form->checkbox("useGravatar", array("id" => "gravatar-toggle", "data-gravatar-orig" => $dataAttr))." ".T("Use Gravatar instead of your own image")."</label> " .
-			"<div class='gravatar-notice'><small>(" . T("Note: This setting has no effect if you haven't uploaded your own image.") . ")</small></div>";
+		return "<label class='checkbox'>" .
+		        $form->checkbox("useGravatar", array("id" => "gravatar-toggle", "data-gravatar-orig" => $dataAttr))." ".
+		        T("Use Gravatar instead of your own image")."</label> " .
+			      "<div class='gravatar-notice'><small>(" .
+			      T("Note: This setting has no effect if you haven't uploaded your own image.") .
+		        ")</small></div>";
 	}
 	
 	/**
 	 * Saves the user's preference of using Gravatar or an image of their own.
+	 * Couldn't get the saveBoolPreference() method to work so added this.
 	 * 
 	 * @param ETForm $form The form object.
 	 * @param string $key The name of the field that was submitted.
