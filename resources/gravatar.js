@@ -7,14 +7,14 @@
 				$(".avatarChooser").hide();
 				$("#gravatarLink").show();
 			} else {
-				if ($(el).data("gravatarOrig")) {
-					$(".avatarChooser img.avatar").attr("src", $(el).data("gravatarOrig"));
+				if ($(el).data("gravatar-orig")) {
+					$(".avatarChooser img.avatar").attr("src", $(el).data("gravatar-orig"));
 				}
 				$(".avatarChooser").show();
 				$("#gravatarLink").hide();
 			}
 		};
-		if ($cbox) {
+		if ($cbox.length > 0) {
 			$cbox.on("click", function(){
 				toggleAvatar(this);
 			});

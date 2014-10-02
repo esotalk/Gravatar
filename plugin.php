@@ -119,7 +119,7 @@ class ETPlugin_Gravatar extends ETPlugin {
 		$dataAttr = ($avatarFormat && $memberId) ? $this->getAvatarSrc($memberId, $avatarFormat) : "" ;
 		
 		return "<label class='checkbox'>" .
-		        $form->checkbox("useGravatar", array("id" => "gravatarToggle", "data-gravatarOrig" => $dataAttr))." ".
+		        $form->checkbox("useGravatar", array("id" => "gravatarToggle", "data-gravatar-orig" => $dataAttr))." ".
 		        T("Use Gravatar instead of your own image")."</label> " .
 			      "<div class='gravatarNotice'><small>(" .
 			      T("Note: This setting has no effect if you haven't uploaded your own image.") .
