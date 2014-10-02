@@ -78,7 +78,7 @@ class ETPlugin_Gravatar extends ETPlugin {
 		
 		if ($forceGravatar == 1 ) {
 			// Don't confuse members with the default avatar when they can't
-			// do nothing with it anyway.
+			// do anything with it anyway.
 			$form->removeField("avatar", "avatar");
 		} else {
 			$form->setValue("useGravatar", ET::$session->preference("gravatar.useGravatar"));
@@ -96,7 +96,7 @@ class ETPlugin_Gravatar extends ETPlugin {
 	 */
 	public function fieldGravatar($form)
 	{
-		return '<div class="gravatarLink" id="gravatarLink">'.
+		return "<div class='gravatarLink' id='gravatarLink'>".
 			sprintf(T("Change your avatar on %s."), "<a href='http://gravatar.com' target='_blank'>Gravatar.com</a>") .
 		"</div>";
 	}
