@@ -5,8 +5,8 @@
 if (!defined("IN_ESOTALK")) exit;
 
 ET::$pluginInfo["Gravatar"] = array(
-	"name" => "Gravatar",
-	"description" => "Allows users to choose to use their Gravatar.",
+	"name" => T("Gravatar"),
+	"description" => T("Allows users to choose to use their Gravatar."),
 	"version" => ESOTALK_VERSION,
 	"author" => "Toby Zerner",
 	"authorEmail" => "support@esotalk.org",
