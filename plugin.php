@@ -96,7 +96,7 @@ class ETPlugin_Gravatar extends ETPlugin {
 	 */
 	public function fieldGravatar($form)
 	{
-		return '<div class="gravatar-link">'.
+		return '<div class="gravatarLink" id="gravatarLink">'.
 			sprintf(T("Change your avatar on %s."), "<a href='http://gravatar.com' target='_blank'>Gravatar.com</a>") .
 		"</div>";
 	}
@@ -119,9 +119,9 @@ class ETPlugin_Gravatar extends ETPlugin {
 		$dataAttr = ($avatarFormat && $memberId) ? $this->getAvatarSrc($memberId, $avatarFormat) : "" ;
 		
 		return "<label class='checkbox'>" .
-		        $form->checkbox("useGravatar", array("id" => "gravatar-toggle", "data-gravatar-orig" => $dataAttr))." ".
+		        $form->checkbox("useGravatar", array("id" => "gravatarToggle", "data-gravatarOrig" => $dataAttr))." ".
 		        T("Use Gravatar instead of your own image")."</label> " .
-			      "<div class='gravatar-notice'><small>(" .
+			      "<div class='gravatarNotice'><small>(" .
 			      T("Note: This setting has no effect if you haven't uploaded your own image.") .
 		        ")</small></div>";
 	}

@@ -1,15 +1,17 @@
 ;(function( $, window, document, undefined ) {
 	"use strict";
 	$(function(){
-		var $cbox = $("#gravatar-toggle");
+		var $cbox = $("#gravatarToggle");
 		var toggleAvatar = function(el){
 			if ($(el).prop("checked")) {
 				$(".avatarChooser").hide();
+				$("#gravatarLink").show();
 			} else {
-				$(".avatarChooser").show();
-				if ($(el).data("gravatar-orig")) {
-					$(".avatarChooser img.avatar").attr("src", $(el).data("gravatar-orig"));
+				if ($(el).data("gravatarOrig")) {
+					$(".avatarChooser img.avatar").attr("src", $(el).data("gravatarOrig"));
 				}
+				$(".avatarChooser").show();
+				$("#gravatarLink").hide();
 			}
 		};
 		$cbox.on("click", function(){
