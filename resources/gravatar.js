@@ -14,9 +14,11 @@
 				$("#gravatarLink").hide();
 			}
 		};
-		$cbox.on("click", function(){
-			toggleAvatar(this);
-		});
-		toggleAvatar($cbox);
+		if ($box) {
+			$cbox.on("click", function(){
+				toggleAvatar(this);
+			});
+			toggleAvatar($cbox);
+		}
 	});
 }( jQuery, window, document, undefined ));
