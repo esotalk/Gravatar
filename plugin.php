@@ -36,30 +36,20 @@ class ETPlugin_Gravatar extends ETPlugin {
 			$forceGravatar = C("plugin.Gravatar.forceGravatar") ? C("plugin.Gravatar.forceGravatar") : 0;
 			$useGravatar = isset($member["preferences"]["gravatar.useGravatar"]) ? $member["preferences"]["gravatar.useGravatar"] : 0;
 			$protocol = C("esoTalk.https") ? "https" : "http";
-
-			// If Gravatar use is not forced and the user has uploaded custom avatar
-			if (!$forceGravatar and !empty($member["memberId"]) and !empty($member["avatarFormat"])) {
-				$file = "uploads/avatars/{$member["memberId"]}.{$member["avatarFormat"]}";
-				$customAvatarUrl = getWebPath($file);
-				// We save the URL of the user-defined avatar in session so we can use it
-				// in fieldUseGravatar()
-				ET::$session->store("gravatar.customAvatarUrl", $customAvatarUrl);
-			} else {
-				$customAvatarUrl = '';
-			}
 			
 			if ($useGravatar || $forceGravatar || empty($member["avatarFormat"])) {
 				$url = "$protocol://www.gravatar.com/avatar/".md5(strtolower(trim($member["email"])))."?d=".urlencode($default)."&s=64";
 				return "<img src='$url' alt='' class='avatar $className'/>";
 			} else {
 				// FIXME: This is copy/pasted from the original avatar() function. A
-				// better way to do this is needed, in case avatar display mechanism
+				// better way to override this is needed, in case avatar display mechanism
 				// changes at some point.
 				// Construct the avatar path from the provided information.
-				if ($customAvatarUrl != '') {
-					return "<img src='$customAvatarUrl' alt='' class='avatar $className'/>";
+				if (!empty($member["memberId"]) and !empty($member["avatarFormat"])) {
+					$file = "uploads/avatars/{$member["memberId"]}.{$member["avatarFormat"]}";
+					$url = getWebPath($file);
+					return "<img src='$url' alt='' class='avatar $className'/>";
 				}
-
 				// Default to an avatar with the first letter of the member's name.
 				return "<span class='avatar $className'>".(!empty($member["username"]) ? mb_strtoupper(mb_substr($member["username"], 0, 1, "UTF-8"), "UTF-8") : "&nbsp;")."</span>";
 			}
@@ -82,7 +72,7 @@ class ETPlugin_Gravatar extends ETPlugin {
 	 * @param type $sender
 	 * @param ETForm $form The form object.
 	 */
-	function handler_settingsController_initGeneral($sender, $form)
+	public function handler_settingsController_initGeneral($sender, $form)
 	{
 		$forceGravatar = C("plugin.Gravatar.forceGravatar") ? C("plugin.Gravatar.forceGravatar") : 0;
 		
@@ -119,11 +109,15 @@ class ETPlugin_Gravatar extends ETPlugin {
 	 */
 	public function fieldUseGravatar($form)
 	{
-		// We fetch the user-defined avatar we stored in the session earlier. This
-		// is then used in JavaScript to display the original image when a member
-		// unchecks the "Use Gravatar..." option. Because it was damn confusing
-		// when it showed the Gravatar.
-		$dataAttr = ET::$session->get("gravatar.customAvatarUrl", "");
+		// We fetch the URL of the user-defined avatar here. This is then used
+		// in gravatar.js to display the original image when a member unchecks
+		// the "Use Gravatar..." option. Because it was damn confusing when it
+		// showed the Gravatar. "Wait, do I need to re-upload my picture?"
+		$user = ET::$session->user;
+		$avatarFormat = isset($user["avatarFormat"]) ? $user["avatarFormat"] : "";
+		$memberId = isset($user["memberId"]) ? $user["memberId"] : "";
+		$dataAttr = ($avatarFormat && $memberId) ? $this->getAvatarSrc($memberId, $avatarFormat) : "" ;
+		
 		return "<label class='checkbox'>" .
 		        $form->checkbox("useGravatar", array("id" => "gravatar-toggle", "data-gravatar-orig" => $dataAttr))." ".
 		        T("Use Gravatar instead of your own image")."</label> " .
@@ -182,5 +176,18 @@ class ETPlugin_Gravatar extends ETPlugin {
 		$sender->data("gravatarSettingsForm", $form);
 		return $this->view("settings");
 	}
+	
+	/**
+	 * Generates the URL of an avatar image for given member ID and avatar
+	 * format.
+	 * 
+	 * @param integer $memberId    The ID of current member
+	 * @param string $avatarFormat The avatar image format of current member
+	 * @return string              URL to the avatar image of current member
+	 */
+	protected function getAvatarSrc($memberId, $avatarFormat) {
+		return getWebPath("uploads/avatars/$memberId.$avatarFormat");
+	}
+	
 	
 }
