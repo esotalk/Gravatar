@@ -14,7 +14,7 @@
 				$("#gravatarLink").hide();
 			}
 		};
-		if ($box) {
+		if ($cbox) {
 			$cbox.on("click", function(){
 				toggleAvatar(this);
 			});
