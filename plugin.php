@@ -41,13 +41,9 @@ class ETPlugin_Gravatar extends ETPlugin {
 				$url = "$protocol://www.gravatar.com/avatar/".md5(strtolower(trim($member["email"])))."?d=".urlencode($default)."&s=64";
 				return "<img src='$url' alt='' class='avatar $className'/>";
 			} else {
-				// FIXME: This is copy/pasted from the original avatar() function. A
-				// better way to override this is needed, in case avatar display mechanism
-				// changes at some point.
 				// Construct the avatar path from the provided information.
 				if (!empty($member["memberId"]) and !empty($member["avatarFormat"])) {
-					$file = "uploads/avatars/{$member["memberId"]}.{$member["avatarFormat"]}";
-					$url = getWebPath($file);
+					$url = ETPlugin_Gravatar::getUploadedAvatarSrc($member["memberId"], $member["avatarFormat"]);
 					return "<img src='$url' alt='' class='avatar $className'/>";
 				}
 				// Default to an avatar with the first letter of the member's name.
@@ -116,7 +112,7 @@ class ETPlugin_Gravatar extends ETPlugin {
 		$user = ET::$session->user;
 		$avatarFormat = isset($user["avatarFormat"]) ? $user["avatarFormat"] : "";
 		$memberId = isset($user["memberId"]) ? $user["memberId"] : "";
-		$dataAttr = ($avatarFormat && $memberId) ? $this->getAvatarSrc($memberId, $avatarFormat) : "" ;
+		$dataAttr = ($avatarFormat && $memberId) ? self::getUploadedAvatarSrc($memberId, $avatarFormat) : "" ;
 		
 		return "<label class='checkbox'>" .
 		        $form->checkbox("useGravatar", array("id" => "gravatarToggle", "data-gravatar-orig" => $dataAttr))." ".
@@ -185,7 +181,7 @@ class ETPlugin_Gravatar extends ETPlugin {
 	 * @param string $avatarFormat The avatar image format of current member
 	 * @return string              URL to the avatar image of current member
 	 */
-	protected function getAvatarSrc($memberId, $avatarFormat) {
+	public static function getUploadedAvatarSrc($memberId, $avatarFormat) {
 		return getWebPath("uploads/avatars/$memberId.$avatarFormat");
 	}
 	
